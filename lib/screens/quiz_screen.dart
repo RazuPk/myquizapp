@@ -1,26 +1,25 @@
-// import the material package
-
 import 'package:flutter/material.dart';
-import '../constants.dart';
+import '../utils/app_colors.dart';
 import '../models/question_model.dart'; // our question model
 import '../widgets/question_widget.dart'; // the question widget
 import '../widgets/next_button.dart';
 import '../widgets/option_card.dart';
 import '../widgets/result_box.dart';
 import '../models/db_connect.dart';
+import '../widgets/screen_background_widget.dart';
 
 // create the HomeScreen widget
 // I'm taking the Stateful widget because it's going to be our parent widget and all the functions and variables will be in this widget so we will need to change state of our widget.
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class QuizScreen extends StatefulWidget {
+  const QuizScreen({Key? key}) : super(key: key);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  State<QuizScreen> createState() => _QuizScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _QuizScreenState extends State<QuizScreen> {
   // create an object for Dbconnect
-  var db = DBconnect();
+  var db = DbConnect();
   // List<Question> _questions = [
   //   Question(
   //     id: '10',
@@ -76,6 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Please select any option'),
           behavior: SnackBarBehavior.floating,
+          backgroundColor: incorrect,
           margin: EdgeInsets.symmetric(vertical: 20.0),
         ));
       }
@@ -123,10 +123,10 @@ class _HomeScreenState extends State<HomeScreen> {
             var extractedData = snapshot.data as List<Question>;
             return Scaffold(
               // change the background
-              backgroundColor: background,
+              backgroundColor: primaryColor,
               appBar: AppBar(
                 title: const Text('Quiz App'),
-                backgroundColor: background,
+                backgroundColor: primaryColor,
                 shadowColor: Colors.transparent,
                 actions: [
                   Padding(
@@ -138,42 +138,44 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              body: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Column(
-                  children: [
-                    // add the questionWIdget here
-                    QuestionWidget(
-                      indexAction: index, // currently at 0.
-                      question: extractedData[index]
-                          .title, // means the first question in the list.
-                      totalQuestions:
-                      extractedData.length, // total length of the list
-                    ),
-                    const Divider(color: neutral),
-                    // add some space
-                    const SizedBox(height: 25.0),
-                    for (int i = 0;
-                    i < extractedData[index].options.length;
-                    i++)
-                      GestureDetector(
-                        onTap: () => checkAnswerAndUpdate(
-                            extractedData[index].options.values.toList()[i]),
-                        child: OptionCard(
-                          option: extractedData[index].options.keys.toList()[i],
-                          color: isPressed
-                              ? extractedData[index]
-                              .options
-                              .values
-                              .toList()[i] ==
-                              true
-                              ? correct
-                              : incorrect
-                              : neutral,
-                        ),
+              body: ScreenBackgroundWidget(
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    children: [
+                      // add the questionWIdget here
+                      QuestionWidget(
+                        indexAction: index, // currently at 0.
+                        question: extractedData[index]
+                            .title, // means the first question in the list.
+                        totalQuestions:
+                        extractedData.length, // total length of the list
                       ),
-                  ],
+                      const Divider(color: neutral),
+                      // add some space
+                      const SizedBox(height: 25.0),
+                      for (int i = 0;
+                      i < extractedData[index].options.length;
+                      i++)
+                        GestureDetector(
+                          onTap: () => checkAnswerAndUpdate(
+                              extractedData[index].options.values.toList()[i]),
+                          child: OptionCard(
+                            option: extractedData[index].options.keys.toList()[i],
+                            color: isPressed
+                                ? extractedData[index]
+                                .options
+                                .values
+                                .toList()[i] ==
+                                true
+                                ? correct
+                                : incorrect
+                                : neutral,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
 
@@ -191,26 +193,27 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           }
         } else {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const CircularProgressIndicator(),
-                const SizedBox(height: 20.0),
-                Text(
-                  'Please Wait while Questions are loading..',
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    decoration: TextDecoration.none,
-                    fontSize: 14.0,
+          return ScreenBackgroundWidget(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 20.0),
+                  Text(
+                    'Please Wait while Questions are loading..',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      decoration: TextDecoration.none,
+                      fontSize: 14.0,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         }
-
         return const Center(
           child: Text('No Data'),
         );

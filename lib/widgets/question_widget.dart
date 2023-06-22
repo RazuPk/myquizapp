@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../constants.dart'; // it contains our colors.
+import '../utils/app_colors.dart'; // it contains our colors.
 
 class QuestionWidget extends StatelessWidget {
   const QuestionWidget(
@@ -16,11 +16,16 @@ class QuestionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width:double.infinity,
       alignment: Alignment.centerLeft,
+      padding:const EdgeInsets.all(16.0),
+      decoration:const BoxDecoration(
+        color:background,
+      ),
       child: Text(
         'Question ${indexAction + 1}/$totalQuestions: $question',
         style: const TextStyle(
-          fontSize: 24.0,
+          fontSize: 20.0,
           color: neutral,
         ),
       ),

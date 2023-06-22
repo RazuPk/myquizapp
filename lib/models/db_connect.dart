@@ -1,22 +1,24 @@
 import 'package:http/http.dart' as http; // the http package
+import '../utils/urls.dart';
 import './question_model.dart';
 import 'dart:convert';
 
-class DBconnect {
+class DbConnect {
   // let's first create  a function to add a question to our database.
 // declare the name of the table you want to create and add .json as suffix
-  final url = Uri.parse('https://myquizapp-808f8-default-rtdb.firebaseio.com/questions.json');
 
-  Future<void> addNewQuestion(Question question) async{
-    http.post(url, body: json.encode({
-      'title': question.title,
-      'options': question.options,
-    }));
+  Future<void> addNewQuestion(Question question) async {
+    http.post(Uri.parse(Urls.questionsUrl),
+        body: json.encode({
+          'title': question.title,
+          'options': question.options,
+        }));
   }
+
   // fetch the data from database
   Future<List<Question>> fetchQuestions() async {
     // we got the data from just using this. now let's print it to see what we got.
-    return http.get(url).then((response) {
+    return http.get(Uri.parse(Urls.questionsUrl)).then((response) {
       // the 'then' method returns a 'response' which is our data.
       // to whats inside we have to decode it first.
       var data = json.decode(response.body) as Map<String, dynamic>;
@@ -33,4 +35,5 @@ class DBconnect {
       return newQuestions;
     });
   }
+
 }

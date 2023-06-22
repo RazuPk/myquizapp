@@ -11,3 +11,7 @@ const Color incorrect = Color(0xFFAB3232);
 const Color neutral = Color(0xFFE7E7E7);
 // set some background color
 const Color background = Color(0xFF1A3464);
+const Color primaryColor = Color(0xFF07ADAE);
+const Color greyColor = Color(0xFF3C3F41);
+const Color softGreyColor = Color(0xA26C6C6C);
+const Color blackColor = Color(0xFF000000);
